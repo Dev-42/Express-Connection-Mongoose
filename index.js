@@ -14,7 +14,7 @@ app.get('/', (req,res) => {
 
 // Reading Users
 app.get('/users' , async (req,res) => {
-    const dataDB = await UserModel.find(req.query)
+    const dataDB = await UserModel.find({deleted : false})
     res.send({dataDB})
     // res.send("We'll send users here from the database")
 })
@@ -45,8 +45,10 @@ app.put('/users/:userID' , async (req,res) => {
 // Deleting operation
 app.delete('/users/:userID' , async (req,res) => {
     const {userID} = req.params
+    // Code for soft delete
+    const payload = {deleted : true}
 
-    const user = await UserModel.findByIdAndDelete({_id : userID})
+    const user = await UserModel.findByIdAndDelete({_id : userID} , payload)
     res.send({user})
 })
 
