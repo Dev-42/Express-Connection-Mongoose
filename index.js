@@ -11,11 +11,15 @@ app.use(express.json())
 app.get('/', (req,res) => {
     res.send("Basic end point")
 })
+
+// Reading Users
 app.get('/users' , async (req,res) => {
-    const dataDB = await UserModel.find()
+    const dataDB = await UserModel.find(req.query)
     res.send({dataDB})
     // res.send("We'll send users here from the database")
 })
+
+// Creating users
 app.post('/users/create' , async (req,res) => {
     const {name,age,city} = req.body
 
@@ -26,6 +30,24 @@ app.post('/users/create' , async (req,res) => {
     })
     await user.save()
     res.send("User was created here successfully")
+})
+
+// Updating users
+app.put('/users/:userID' , async (req,res) => {
+    const {userID} = req.params
+    const payload = req.body
+
+    const user = await UserModel.findByIdAndUpdate({_id : userID} , payload)
+
+    res.send({user})
+})
+
+// Deleting operation
+app.delete('/users/:userID' , async (req,res) => {
+    const {userID} = req.params
+
+    const user = await UserModel.findByIdAndDelete({_id : userID})
+    res.send({user})
 })
 
 app.listen(8000 , async () => {
